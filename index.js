@@ -7,8 +7,36 @@ const PORT = 7000;
 
 
 //Middleware -plugin
-app.use(express.urlencoded({extended: false}))
+app.use(express.urlencoded({extended: false})) //this one is built in middleware
+ 
+//Middleware -1
+// app.use((req,res,next)=>{
+//     console.log("Hello from Middleware 1")
+//     req.myUsername = "devansh";
+//     // return res.json({msg: "Hello from Middleware 1"});
+//     next();
+// })
 
+
+//Middleware -1
+app.use((req,res,next)=>{
+    fs.appendFile("log.txt",`\n${req.ip} ${Date.now()},${req.method}: ${req.path}`,
+    (err,data)=>{
+        next();
+    }
+    );
+    req.myUsername = "devansh";
+    // return res.json({msg: "Hello from Middleware 1"});
+    next();
+})
+
+//Middleware -2
+app.use((req,res,next)=>{
+    console.log("Hello from Middleware 2", req.myUsername)
+    // return res.json({msg: "Hello from Middleware 2"});  //this will not proceed to routes it just return from here by printing the message "Hello from Middleware 2"
+    // return res.end("hey")  //this will not proceed to routes it just return from here by printing the message Hey
+    next();
+})
 
 //Routes
 app.get('/users', (req,res) => {
@@ -19,13 +47,10 @@ app.get('/users', (req,res) => {
     `
     res.send(html)
 })
-
 //REST API
 app.get('/api/users', (req,res) => {
     return res.json(users);
 })
-
-
 // //M1 
 // app.get("/api/users/:id", (req,res) => {
 //     const id = Number(req.params.id);
@@ -41,8 +66,6 @@ app.post("/api/users", (req,res) => {
     return res.jsonp({status: "success", id: users.length});
     });
     })
-    
-
 // app.patch("/api/users/:id", (req,res) => {
 //     //ToDo: Edit the user with id
 //     return res.jsonp({status: "pending"});
