@@ -1,8 +1,14 @@
 const express = require("express");
 const users = require("./MOCK_DATA.json")
+const fs = require('fs')
 
 const app = express();
 const PORT = 7000;
+
+
+//Middleware -plugin
+app.use(express.urlencoded({extended: false}))
+
 
 //Routes
 app.get('/users', (req,res) => {
@@ -27,10 +33,15 @@ app.get('/api/users', (req,res) => {
 //     return res.json(user);
 // })
 
-// app.post("/api/users/:id", (req,res) => {
-//     //ToDo: Create new user
-//     return res.jsonp({status: "pending"});
-// });
+app.post("/api/users", (req,res) => {
+    //ToDo: Create new user
+    const body = req.body;
+    users.push({...body, id: users.length +1});
+    fs.writeFile('./MOCK_DATA.json', JSON.stringify(users), (err,data) =>{
+    return res.jsonp({status: "success", id: users.length});
+    });
+    })
+    
 
 // app.patch("/api/users/:id", (req,res) => {
 //     //ToDo: Edit the user with id
@@ -53,7 +64,17 @@ app
    })
    .patch((req,res) => {
     //ToDo: Edit the user with id
-    return res.jsonp({status: "pending"});
+    const id = Number(req.params.id);
+    const body = req.body;
+    const userIndex = users.findIndex((user) => user.id === id);
+
+    if (userIndex === -1) return res.status(404).json({ status: "User not found" });
+
+    users[userIndex] = { ...users[userIndex], ...body };
+
+    fs.writeFile('./MOCK_DATA.json', JSON.stringify(users), (err) => {
+      return res.json({ status: "success", user: users[userIndex] });
+    });
    })
    .post((req,res) => {
     //ToDo: Create new user
@@ -61,7 +82,16 @@ app
    })
    .delete((req,res) => {
     //ToDo: delete the user with id
-    return res.jsonp({status: "pending"});
+    const id = Number(req.params.id);
+    const userIndex = users.findIndex((user) => user.id === id);
+
+    if (userIndex === -1) return res.status(404).json({ status: "User not found" });
+
+    users.splice(userIndex, 1);
+
+    fs.writeFile('./MOCK_DATA.json', JSON.stringify(users), (err) => {
+      return res.json({ status: "success", message: `User ${id} deleted` });
+    });
    })
 
 app.listen(PORT, () => console.log(`Server Started at PORT ${PORT}`))
