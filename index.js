@@ -27,7 +27,7 @@ app.use((req,res,next)=>{
     );
     req.myUsername = "devansh";
     // return res.json({msg: "Hello from Middleware 1"});
-    next();
+    // next();
 })
 
 //Middleware -2
@@ -49,6 +49,8 @@ app.get('/users', (req,res) => {
 })
 //REST API
 app.get('/api/users', (req,res) => {
+    res.setHeader("X-MyName", "Devansh Agarwal"); //custom header
+    // Always use X when using custom
     return res.json(users);
 })
 // //M1 
@@ -61,18 +63,21 @@ app.get('/api/users', (req,res) => {
 app.post("/api/users", (req,res) => {
     //ToDo: Create new user
     const body = req.body;
-    users.push({...body, id: users.length +1});
+    if(!body || !body.first_name || !body.last_name ||!body.email ||!body.gender ||!body.job_title){
+        res.status(400).json({msg: 'All fileds are required'})
+    }
+    users.push({...body, id: users.length+1});
     fs.writeFile('./MOCK_DATA.json', JSON.stringify(users), (err,data) =>{
-    return res.jsonp({status: "success", id: users.length});
+    return res.status(201).json({status: "success", id: users.length});
     });
     })
 // app.patch("/api/users/:id", (req,res) => {
-//     //ToDo: Edit the user with id
+//     //ToDo: Edit the user with id (this is not logic this is just statement)
 //     return res.jsonp({status: "pending"});
 // });
 
 // app.delete("/api/users/:id", (req,res) => {
-//     //ToDo: delete the user with id
+//     //ToDo: delete the user with id (this is not logic this is just statement)
 //     return res.jsonp({status: "pending"});
 // });
 
@@ -83,6 +88,9 @@ app
    .get((req,res) => {
     const id = Number(req.params.id);
     const user = users.find((user) => user.id === id);
+    if(!user){
+        res.status(404).json({error:'User not found'})
+    }
     return res.json(user);
    })
    .patch((req,res) => {
