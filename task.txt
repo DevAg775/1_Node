@@ -1,18 +1,23 @@
-REST API - JSON
+REST API - JSON  Done
 
-GET /users - HTML Document Reader
-GET /api/users - List all users using Json 
+GET /users - HTML Document Reader Done
+GET /api/users - List all users using Json  Done
 
 
-GET /api/users/1 - Get the user with ID 1
-GET /api/users/2 - Get the user with ID 2
+GET /api/users/1 - Get the user with ID 1 Done
+GET /api/users/2 - Get the user with ID 2 Done
 
 
 Dynamic Path Parameters
 GET /api/users/:id
 ;id -> variable | Dynamic
 
-POST /api/users - Create the user
+POST /api/users - Create the user Done
 
-PATCH /api/users/1 - Edit the user with ID 1
-DELETE /api/users/1 - Delete the user with ID 1
+PATCH /api/users/1 - Edit the user with ID 1 Done
+DELETE /api/users/1 - Delete the user with ID 1 Done
+
+
+Schema -Define the structure
+Schema - Model
+Using Model we do CRUD operations
